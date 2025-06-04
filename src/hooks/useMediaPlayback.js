@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useMediaPlayback(meeting) {
   const audioRef = useRef(null);
@@ -33,26 +33,31 @@ export function useMediaPlayback(meeting) {
     return () => cancelAnimationFrame(animationFrameId);
   }, [meeting]);
 
+  const handlePlay = useCallback(() => {
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio || !video) return;
+
+    video.currentTime = audio.currentTime;
+    if (video.paused) {
+      video.play().catch((err) => {
+        console.warn(err);
+      });
+    }
+  }, []);
+
+  const handlePause = useCallback(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+    }
+  }, []);
+
   useEffect(() => {
     const audio = audioRef.current;
     const video = videoRef.current;
 
     if (!audio || !video) return;
-
-    const syncVideoToAudio = () => {
-      video.currentTime = audio.currentTime;
-    };
-
-    const handlePlay = () => {
-      syncVideoToAudio();
-      if (video.paused) {
-        video.play().catch(() => {});
-      }
-    };
-
-    const handlePause = () => {
-      video.pause();
-    };
 
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
@@ -63,10 +68,7 @@ export function useMediaPlayback(meeting) {
     };
   }, []);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    const audio = audioRef.current;
-
+  function syncVideoWithAudio({ video, audio, currentVideoPath }) {
     if (!video || !audio) return;
 
     if (currentVideoPath) {
@@ -94,6 +96,13 @@ export function useMediaPlayback(meeting) {
       video.removeAttribute("src");
       video.load();
     }
+  }
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+
+    syncVideoWithAudio({ video, audio, currentVideoPath });
   }, [currentVideoPath, currentTime]);
 
   return {
