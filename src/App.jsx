@@ -4,9 +4,7 @@ import MediaPlayer from "./components/MediaPlayer";
 
 function App() {
   return (
-    <>
       <MediaPlayer meeting={meeting} />
-    </>
   );
 }
 
