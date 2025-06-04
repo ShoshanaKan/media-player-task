@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useMediaSync(meeting) {
+export function useMediaPlayback(meeting) {
   const audioRef = useRef(null);
   const videoRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);

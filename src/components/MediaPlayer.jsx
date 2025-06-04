@@ -1,7 +1,7 @@
-import { useMediaSync } from "../hooks/useMediaPlayback";
+import { useMediaPlayback } from "../hooks/useMediaPlayback";
 
 export default function MediaPlayer({ meeting }) {
-  const { audioRef, videoRef } = useMediaSync(meeting);
+  const { audioRef, videoRef } = useMediaPlayback(meeting);
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white shadow-md rounded-md space-y-4">
